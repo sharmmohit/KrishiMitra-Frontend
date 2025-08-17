@@ -5,21 +5,24 @@ import {
   faLeaf,
   faTractor,
   faSignOutAlt,
-  faCloudUpload,
-  faListAlt,
-  faArrowRight,
   faUserCircle,
-  faCog,
-  faShoppingBag,
-  faBoxOpen  // ✅ Missing import added here
+  faBoxOpen,
+  faArrowRight
 } from '@fortawesome/free-solid-svg-icons';
 import PropTypes from 'prop-types';
+
+// Import placeholder images (you should replace these with your actual images)
+import cropRecommendationImg from '../assets/croprecom.png';
+import yieldPredictionImg from '../assets/yield.png';
+import organicFarmingImg from '../assets/organic.png';
+import diseasePredictionImg from '../assets/disease.png';
+import aiChatbotImg from '../assets/chat.png';
+import farmerShopImg from '../assets/shop.png';
 
 function FarmerHomePage() {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const location = useLocation();
   const email = localStorage.getItem("email") || 'Farmer';
   const [farmer, setFarmer] = useState(null);
     
@@ -32,13 +35,6 @@ function FarmerHomePage() {
             .catch(err => console.error("Failed to load farmer", err));
     }
   }, []);
-
-  const listingsurl = `/farmer/crop-listings?email=${encodeURIComponent(email)}`;
-
-  const handleEditProfile = () => {
-    setIsDropdownOpen(false);
-    navigate('/farmer/profile/edit');
-  };
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -56,19 +52,68 @@ function FarmerHomePage() {
   const handleLogout = () => {
     const email = localStorage.getItem("email");
     if (email) {
-        localStorage.removeItem(`cart-${email}`); // Optional for farmer
+        localStorage.removeItem(`cart-${email}`);
         localStorage.removeItem("email");
     }
     navigate("/signin");
   };
+
+  // Card data matching the image style
+  const featureCards = [
+     {
+      title: "Farmer Shop",
+      description: "Manage your crops - upload listings, view sales, and track bookings all in one place.",
+      image: farmerShopImg,
+      features: ["Upload Crops", "View Listings", "Track Sales", "Manage Bookings"],
+      action: () => navigate('/farmer/upload-crop')
+    },
+    {
+      title: "Crop Recommendation",
+      description: "Find the best crop to cultivate based on your soil and weather conditions using advanced AI algorithms.",
+      image: cropRecommendationImg,
+      features: ["AI Powered", "Soil Analysis", "Weather Based", "Optimal Crops", "Seasonal Advice"],
+      action: () => navigate('/crop-recommendation')
+    },
+    {
+      title: "Yield Prediction",
+      description: "Predict the expected yield for different crops using advanced machine learning models and historical data.",
+      image: yieldPredictionImg,
+      features: ["ML Analytics", "Historical Data", "Accurate Forecast", "Early Detection"],
+      action: () => navigate('/yield-prediction')
+    },
+    {
+      title: "Organic Farming Guide",
+      description: "Learn sustainable organic practices—from soil preparation to eco-friendly pest control and certification processes.",
+      image: organicFarmingImg,
+      features: ["Sustainable", "Eco-friendly", "Certification", "Soil Health"],
+      action: () => navigate('/organic-guide')
+    },
+    
+    {
+      title: "Disease Prediction",
+      description: "Detect plant diseases early and get preventive measures and treatment advice to protect your crops.",
+      image: diseasePredictionImg,
+      features: ["Early Detection", "Treatment", "Prevention", "Plant Health"],
+      action: () => navigate('/disease-prediction')
+    },
+   
+    {
+      title: "AI ChatBot",
+      description: "Get instant plantation guidance and crop planning assistance from our AI assistant.",
+      image: aiChatbotImg,
+      features: ["24/7 Support", "Plantation Guide", "Crop Planning", "Instant Help"],
+      action: () => navigate('/ai-chatbot')
+    },
+   
+  ];
 
   return (
     <div className="min-h-screen bg-green-50 flex flex-col">
       {/* Header */}
       <header className="bg-white shadow-md py-4 px-6 flex items-center justify-between">
         <Link to="/" className="text-green-700 font-bold text-2xl flex items-center hover:opacity-80">
-              <FontAwesomeIcon icon={faLeaf} className="mr-2 text-green-600 animate-pulse" />
-                  CropBoom
+          <FontAwesomeIcon icon={faLeaf} className="mr-2 text-green-600 animate-pulse" />
+          CropBoom
         </Link>
 
         <div className="flex flex-col items-end">
@@ -111,62 +156,65 @@ function FarmerHomePage() {
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto py-8 flex justify-center items-center">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full max-w-6xl">
-          {/* Upload Your Crop for Sell Box */}
-          <div className="bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col justify-center items-center p-8">
-            <div className="text-green-600 text-6xl mb-6">
-              <FontAwesomeIcon icon={faCloudUpload} />
-            </div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Upload Crop</h2>
-            <p className="text-gray-600 text-center text-lg mb-6">List your harvested crops for sale.</p>
-            <button
-              onClick={() => navigate('/farmer/upload-crop', { state: { email } })}
-              className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline transition-colors duration-300 flex items-center"
-              aria-label="Upload crops for sale"
-            >
-              Upload Now
-              <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-            </button>
-          </div>
+      <main className="container mx-auto py-8 px-4">
+        <div className="text-center mb-12">
+          <h1 className="text-3xl font-bold text-green-800 mb-4">Comprehensive Agricultural Solutions</h1>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            Explore our cutting-edge tools designed to revolutionize your farming experience with AI-powered insights and community collaboration.
+          </p>
+        </div>
 
-          {/* My Crop Listing Box */}
-          <div className="bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col justify-center items-center p-8">
-            <div className="text-blue-600 text-6xl mb-6">
-              <FontAwesomeIcon icon={faListAlt} />
-            </div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">My Listings</h2>
-            <p className="text-gray-600 text-center text-lg mb-6">View and manage your listed crops.</p>
-            <Link
-              to={listingsurl}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline transition-colors duration-300 flex items-center"
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {featureCards.map((card, index) => (
+            <div 
+              key={index}
+              className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
             >
-              View Listings
-              <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-            </Link>
-          </div>
-
-          {/* Bookings & Sold Crops Box */}
-          <div className="bg-white rounded-lg shadow-xl overflow-hidden hover:shadow-2xl transition-shadow duration-300 flex flex-col justify-center items-center p-8">
-            <div className="text-purple-600 text-6xl mb-6">
-              <FontAwesomeIcon icon={faShoppingBag} />
+              <div className="flex flex-col md:flex-row">
+                {/* Image Section */}
+                <div className="md:w-2/5">
+                  <img 
+                    src={card.image} 
+                    alt={card.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                
+                {/* Content Section */}
+                <div className="p-6 md:w-3/5 flex flex-col">
+                  <h2 className="text-xl font-bold text-gray-800 mb-2">{card.title}</h2>
+                  <p className="text-gray-600 mb-4">{card.description}</p>
+                  
+                  {/* Features */}
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {card.features.map((feature, i) => (
+                      <span 
+                        key={i}
+                        className="inline-block bg-green-100 text-green-800 rounded-full px-3 py-1 text-sm font-medium"
+                      >
+                        {feature}
+                      </span>
+                    ))}
+                  </div>
+                  
+                  {/* Action Button */}
+                  <div className="mt-auto flex justify-end">
+                    <button
+                      onClick={card.action}
+                      className="flex items-center text-green-600 hover:text-green-800 font-semibold"
+                    >
+                      Explore
+                      <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h2 className="text-2xl font-semibold text-gray-800 mb-4 text-center">Bookings & Sales</h2>
-            <p className="text-gray-600 text-center text-lg mb-6">View your sold crops and buyer bookings.</p>
-            <Link
-              to="/farmer/bookings"
-              state={{ email }}
-              className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 px-6 rounded-full focus:outline-none focus:shadow-outline transition-colors duration-300 flex items-center"
-              aria-label="View bookings and sales"
-            >
-              View Bookings
-              <FontAwesomeIcon icon={faArrowRight} className="ml-2" />
-            </Link>
-          </div>
+          ))}
         </div>
       </main>
 
-      <footer className="bg-gray-100 py-4 text-center text-gray-600 text-sm">
+      <footer className="bg-gray-100 py-4 text-center text-gray-600 text-sm mt-8">
         &copy; {new Date().getFullYear()} CropBoom. All rights reserved.
       </footer>
     </div>

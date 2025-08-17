@@ -23,10 +23,27 @@ function Landing() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Load Google Translate script
+    const script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    script.async = true;
+    document.body.appendChild(script);
+
+    // Initialize Google Translate
+    window.googleTranslateElementInit = () => {
+      if (window.google && window.google.translate) {
+        new window.google.translate.TranslateElement({
+          pageLanguage: 'en',
+          includedLanguages: 'en,hi',
+          layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    };
+
     // Fetch agriculture news from NewsAPI
     const fetchNews = async () => {
       try {
-        // Note: In production, use environment variables for API keys
         const response = await fetch(
           `https://newsapi.org/v2/everything?q=agriculture+india&apiKey=61c40eda66f14630a3fc9d4c6ed2e487&pageSize=4`
         );
@@ -34,7 +51,6 @@ function Landing() {
         setNews(data.articles || []);
       } catch (error) {
         console.error("Error fetching news:", error);
-        // Fallback dummy data if API fails
         setNews([
           {
             title: "India's Agricultural Growth Reaches 3.5% in Q2",
@@ -57,10 +73,17 @@ function Landing() {
     };
 
     fetchNews();
+
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex flex-col items-center overflow-x-hidden">
+      {/* Google Translate Widget */}
+      <div id="google_translate_element" className="fixed bottom-4 right-4 z-50 bg-white p-2 rounded shadow-lg"></div>
+
       {/* Header */}
       <header className="flex justify-between items-center p-6 w-full max-w-7xl mx-auto">
         <div className="flex items-center">
