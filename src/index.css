@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#root {
+  height: 100%;
+  /* Add this to make #root fill the height of its parent */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ensure the main content area can grow to fill available space */
+.min-h-screen {
+  flex-grow: 1;
+}
+
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ffffff;
+    color: #213547;
+  }
+}
+/* index.css or your global styles */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+  display: flex;
+  width: max-content;
+}
