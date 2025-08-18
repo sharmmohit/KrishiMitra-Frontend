@@ -11,10 +11,10 @@ import {
 import { Link } from 'react-router-dom';
 
 // Import your agriculture images
-import agri1 from '../assets/agriculture1.png';
-import agri2 from '../assets/agriculture2.png';
-import agri3 from '../assets/agriculture3.png';
-import agri4 from '../assets/agriculture4.png';
+import agri1 from '../../assets/agriculture1.png';
+import agri2 from '../../assets/agriculture2.png';
+import agri3 from '../../assets/agriculture3.png';
+import agri4 from '../../assets/agriculture4.png';
 
 const agricultureImages = [agri1, agri2, agri3, agri4];
 

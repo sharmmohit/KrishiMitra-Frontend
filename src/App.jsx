@@ -1,29 +1,31 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Landing from './Components/Landing';
-import SignIn from './Components/SignIn';
-import FarmerRegistrationForm from './Components/FarmerRegistrationForm';
-import BuyerRegistrationForm from './Components/BuyerRegistrationForm';
-import BuyerHomePage from './Components/BuyerHomePage';
-import FarmerHomePage from './Components/FarmerHomePage';
-import UploadCropForm from './Components/UploadCropForm';
-import MyCropListings from './Components/MyCropListings';
-import BuyerCart from './Components/BuyerCart';
-import BuyNowPage from './Components/BuyNowPage'; // Import BuyNowPage
-import BuyerProfile from './Components/BuyerProfile';
-import EditBuyerProfile from './Components/EditBuyerProfile';
-import BuyerOrders from './Components/BuyerOrders';
+import Landing from './Components/Landing/Landing';
+import SignIn from './Components/Landing/SignIn';
+import FarmerRegistrationForm from './Components/Landing/FarmerRegistrationForm';
+import BuyerRegistrationForm from './Components/Landing/BuyerRegistrationForm';
+import BuyerHomePage from './Components/Buyer/BuyerHomePage';
+import FarmerHomePage from './Components/Farmer/FarmerHomePage';
+import UploadCropForm from './Components/Farmer/UploadCropForm';
+import MyCropListings from './Components/Farmer/MyCropListings';
+import BuyerCart from './Components/Buyer/BuyerCart';
+import BuyNowPage from './Components/Buyer/BuyNowPage'; // Import BuyNowPage
+import BuyerProfile from './Components/Buyer/BuyerProfile';
+import EditBuyerProfile from './Components/Buyer/EditBuyerProfile';
+import BuyerOrders from './Components/Buyer/BuyerOrders';
 import BookingsPage from './Components/BookingsPage';
-import FarmerProfile from './Components/FarmerProfile'; // add this import as it is used below
-import ViewListing from './Components/ViewListing';
-import EditListing from './Components/EditListing';
-import BuyerChat from './Components/BuyerChat'; 
+import FarmerProfile from './Components/Farmer/FarmerProfile'; // add this import as it is used below
+import ViewListing from './Components/Farmer/ViewListing';
+import EditListing from './Components/Farmer/EditListing';
+import BuyerChat from './Components/Buyer/BuyerChat'; 
+import CropRecommendation from './Components/Farmer/CropRecommendation';
+import PlantDiseaseDetection from './Components/Farmer/PlantDiseaseDetection';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<FarmerHomePage/>} />
+        <Route path="/" element={<Landing/>} />
         <Route path="/signin" element={<SignIn />} />
 
         {/* Registration */}
@@ -41,6 +43,8 @@ function App() {
         <Route path="/farmer/profile" element={<FarmerProfile />} />
         <Route path="/farmer/listings/:id" element={<ViewListing />} />
         <Route path="/farmer/listings/edit/:id" element={<EditListing />} />
+        <Route path="/disease-prediction" element={<PlantDiseaseDetection />} />
+        <Route path="/crop-recommendation" element={<CropRecommendation />} />
 
         {/* Buyer routes */}
         <Route path="/buyer/cart" element={<BuyerCart />} />

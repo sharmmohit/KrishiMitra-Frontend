@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLeaf, faEye, faEyeSlash, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { validateLoginForm } from '../utils/validators';
+import { validateLoginForm } from '../../utils/validators';
 
 function SignInForm() {
     const [formData, setFormData] = useState({

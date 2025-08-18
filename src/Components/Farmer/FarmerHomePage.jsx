@@ -12,12 +12,12 @@ import {
 import PropTypes from 'prop-types';
 
 // Import placeholder images (you should replace these with your actual images)
-import cropRecommendationImg from '../assets/croprecom.png';
-import yieldPredictionImg from '../assets/yield.png';
-import organicFarmingImg from '../assets/organic.png';
-import diseasePredictionImg from '../assets/disease.png';
-import aiChatbotImg from '../assets/chat.png';
-import farmerShopImg from '../assets/shop.png';
+import cropRecommendationImg from '../../assets/croprecom.png';
+import yieldPredictionImg from '../../assets/yield.png';
+import organicFarmingImg from '../../assets/organic.png';
+import diseasePredictionImg from '../../assets/disease.png';
+import aiChatbotImg from '../../assets/chat.png';
+import farmerShopImg from '../../assets/shop.png';
 
 function FarmerHomePage() {
   const navigate = useNavigate();

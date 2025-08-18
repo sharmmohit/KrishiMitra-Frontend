@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faLeaf, faEye, faEyeSlash, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { validateBuyerForm } from '../utils/validators';
+import { validateBuyerForm } from '../../utils/validators';
 
 function BuyerRegistrationForm() {
     const [formData, setFormData] = useState({

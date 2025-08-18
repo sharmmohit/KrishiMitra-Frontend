@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLeaf, faTractor, faEye, faEyeSlash, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { validateFarmerForm } from '../utils/validators';
+import { validateFarmerForm } from '../../utils/validators';
 
 function FarmerRegistrationForm() {
     const [formData, setFormData] = useState({
