@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLeaf, faArrowLeft, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -21,25 +21,11 @@ function CropRecommendation() {
   const [isLoading, setIsLoading] = useState(false);
 
   const showErrorToast = (message) => {
-    toast.error(message, {
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    toast.error(message, { autoClose: 2000 });
   };
 
   const showSuccessToast = (message) => {
-    toast.success(message, {
-      position: "top-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-    });
+    toast.success(message, { autoClose: 2000 });
   };
 
   const handleBackClick = () => {
@@ -48,16 +34,8 @@ function CropRecommendation() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-    if (errors[name]) {
-      setErrors({
-        ...errors,
-        [name]: null
-      });
-    }
+    setFormData({ ...formData, [name]: value });
+    if (errors[name]) setErrors({ ...errors, [name]: null });
   };
 
   const validate = () => {
@@ -83,14 +61,27 @@ function CropRecommendation() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const mockAPICall = async (data) => {
-    return new Promise(resolve => {
-      setTimeout(() => {
-        const crops = ['Rice', 'Wheat', 'Maize', 'Soybean', 'Cotton'];
-        const randomCrop = crops[Math.floor(Math.random() * crops.length)];
-        resolve({ predicted_crop: randomCrop });
-      }, 1500);
+  // 🔥 Replace mockAPICall with real backend call
+  const callBackendAPI = async (data) => {
+    const response = await fetch("http://127.0.0.1:5000/predict", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        N: Number(data.nitrogen),
+        P: Number(data.phosphorus),
+        K: Number(data.potassium),
+        temperature: Number(data.temperature),
+        humidity: Number(data.humidity),
+        ph: Number(data.ph),
+        rainfall: Number(data.rainfall),
+      }),
     });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch prediction");
+    }
+
+    return response.json();
   };
 
   const handleSubmit = async (e) => {
@@ -98,8 +89,8 @@ function CropRecommendation() {
     if (validate()) {
       setIsLoading(true);
       try {
-        const response = await mockAPICall(formData);
-        setPrediction(response.predicted_crop);
+        const response = await callBackendAPI(formData);
+        setPrediction(response.recommended_crop); // 👈 backend returns this
         showSuccessToast('Crop recommendation generated!');
       } catch (error) {
         console.error("Prediction error:", error);
@@ -123,19 +114,17 @@ function CropRecommendation() {
   return (
     <div className="min-h-screen bg-green-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md">
+        
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <button 
-            onClick={handleBackClick}
-            className="text-green-600 hover:text-green-800"
-          >
+          <button onClick={handleBackClick} className="text-green-600 hover:text-green-800">
             <FontAwesomeIcon icon={faArrowLeft} size="lg" />
           </button>
           <h2 className="text-xl font-bold text-green-700 flex items-center">
             <FontAwesomeIcon icon={faChartLine} className="mr-2" />
             Crop Recommendation
           </h2>
-          <div className="w-6"></div> {/* Spacer for alignment */}
+          <div className="w-6"></div>
         </div>
 
         {prediction ? (
@@ -185,31 +174,9 @@ function CropRecommendation() {
                 disabled={isLoading}
                 className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg w-full mt-4 flex items-center justify-center"
               >
-                {isLoading ? (
-                  <>
-                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Analyzing...
-                  </>
-                ) : (
-                  'GET RECOMMENDATION'
-                )}
+                {isLoading ? "Analyzing..." : "GET RECOMMENDATION"}
               </button>
             </form>
-
-            <div className="grid grid-cols-3 gap-2 mt-6 text-center text-xs">
-              <div className="bg-green-50 p-2 rounded">
-                <p className="font-medium text-green-700">AI-Powered</p>
-              </div>
-              <div className="bg-green-50 p-2 rounded">
-                <p className="font-medium text-green-700">Instant</p>
-              </div>
-              <div className="bg-green-50 p-2 rounded">
-                <p className="font-medium text-green-700">Accurate</p>
-              </div>
-            </div>
           </>
         )}
       </div>
