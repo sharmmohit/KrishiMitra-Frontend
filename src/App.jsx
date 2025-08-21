@@ -25,7 +25,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<FarmerHomePage/>} />
+        <Route path="/" element={<Landing/>} />
         <Route path="/signin" element={<SignIn />} />
 
         {/* Registration */}
