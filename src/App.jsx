@@ -13,7 +13,7 @@ import BuyNowPage from './Components/Buyer/BuyNowPage'; // Import BuyNowPage
 import BuyerProfile from './Components/Buyer/BuyerProfile';
 import EditBuyerProfile from './Components/Buyer/EditBuyerProfile';
 import BuyerOrders from './Components/Buyer/BuyerOrders';
-import BookingsPage from './Components/BookingsPage';
+import BookingsPage from './Components/Farmer/BookingsPage';
 import FarmerProfile from './Components/Farmer/FarmerProfile'; // add this import as it is used below
 import ViewListing from './Components/Farmer/ViewListing';
 import EditListing from './Components/Farmer/EditListing';
@@ -25,7 +25,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Landing/>} />
+        <Route path="/" element={<FarmerHomePage/>} />
         <Route path="/signin" element={<SignIn />} />
 
         {/* Registration */}

@@ -17,7 +17,7 @@ import 'react-toastify/dist/ReactToastify.css';
 //     progress: undefined,
 // });
 
-const GEMINI_API_KEY = 'AIzaSyAmCri7ZlH3JTm9VJYN4Y79JC-eaCYgx_Y'; // Replace with your actual Gemini API key
+const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY; 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
 const toBase64 = (file) =>
