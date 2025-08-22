@@ -61,7 +61,7 @@ function CropRecommendation() {
     return Object.keys(newErrors).length === 0;
   };
 
-  // 🔥 Replace mockAPICall with real backend call
+
   const callBackendAPI = async (data) => {
     const response = await fetch("http://127.0.0.1:5000/predict", {
       method: "POST",
