@@ -65,7 +65,7 @@ function FarmerHomePage() {
       description: "Manage your crops - upload listings, view sales, and track bookings all in one place.",
       image: farmerShopImg,
       features: ["Upload Crops", "View Listings", "Track Sales", "Manage Bookings"],
-      action: () => navigate('/farmer/upload-crop')
+       action: () => navigate('/farmer/shop')
     },
     {
       title: "Crop Recommendation",
