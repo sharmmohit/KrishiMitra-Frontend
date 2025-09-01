@@ -6,65 +6,28 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY; 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const BACKEND_API_URL = "http://localhost:8080/api/disease/detect";
 
-const toBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+  async function detectDisease(imageFile, plantName) {
+    try {
+      const formData = new FormData();
+      formData.append("image", imageFile); // pass the File directly
+      formData.append("plantName", plantName);
 
-async function detectDisease(base64Image, plantName) {
-  if (!GEMINI_API_KEY) {
-    throw new Error("Gemini API key is missing. Please configure it.");
-  }
-  const prompt = `Analyze this ${plantName || 'plant'} image and detect any diseases. 
-  Provide the disease name (or "Healthy" if no disease found), 
-  severity (Low/Medium/High), 
-  and treatment recommendations in 1-2 sentences.
-  Format response as: 
-  "Disease: [name]\nSeverity: [level]\nTreatment: [recommendations]"`;
+      const response = await axios.post(BACKEND_API_URL, formData, {
+        headers: { "Content-Type": "multipart/form-data" }
+      });
 
-  try {
-    const response = await axios.post(
-      `${GEMINI_API_URL}?key=${GEMINI_API_KEY}`,
-      {
-        contents: [
-          {
-            parts: [
-              {
-                inline_data: {
-                  mime_type: 'image/jpeg',
-                  data: base64Image,
-                },
-              },
-              {
-                text: prompt,
-              },
-            ],
-          },
-        ],
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-
-    const result = response.data;
-    if (result?.candidates?.[0]?.content?.parts?.[0]?.text) {
-      return { analysis: result.candidates[0].content.parts[0].text };
+      return response.data;
+    } catch (err) {
+      console.error("Error calling backend:", err);
+      return { error: err.message || "Failed to detect disease" };
     }
-    return { error: 'Unexpected response from Gemini' };
-  } catch (error) {
-    console.error('Error calling Gemini API:', error);
-    return { error: error.message || 'Failed to detect disease' };
-  }
 }
+
+
+
+
 
 function PlantDiseaseDetection() {
   const [plantName, setPlantName] = useState('');
@@ -167,31 +130,31 @@ function PlantDiseaseDetection() {
   };
 
   const handleDetect = async (e) => {
-    e.preventDefault();
-    if (!image) {
-      showErrorToast('Please upload an image first');
-      return;
+  e.preventDefault();
+  if (!image) {
+    showErrorToast('Please upload an image first');
+    return;
+  }
+
+  setLoading(true);
+  try {
+    const detection = await detectDisease(image, plantName); // send actual File
+    setDetectionResult(detection);
+
+    if (detection.error) {
+      showErrorToast('Detection failed: ' + detection.error);
+    } else {
+      showSuccessToast('Disease detected successfully!');
     }
 
-    setLoading(true);
-    try {
-      const base64Image = await toBase64(image);
-      const detection = await detectDisease(base64Image, plantName);
-      setDetectionResult(detection);
+  } catch (error) {
+    showErrorToast('Detection failed: ' + error.message);
+    setDetectionResult({ error: error.message });
+  } finally {
+    setLoading(false);
+  }
+};
 
-      if (detection.error) {
-        showErrorToast('Detection failed: ' + detection.error);
-      } else {
-        const parsedData = parseDetectionResult(detection.analysis);
-        showSuccessToast('Disease detected successfully!');
-      }
-    } catch (error) {
-      showErrorToast('Detection failed: ' + error.message);
-      setDetectionResult({ error: error.message });
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-green-50 flex justify-center items-center py-10 px-4">
@@ -230,22 +193,17 @@ function PlantDiseaseDetection() {
               {detectionResult && !detectionResult.error && (
                 <div className="p-4 border border-gray-200 rounded-lg bg-gray-50">
                   <h3 className="text-lg font-semibold text-green-600 mb-2">Detection Result</h3>
-                  <div className="space-y-2">
-                    {detectionResult.analysis.split('\n').map((line, i) => (
-                      <p key={i} className="font-medium">
-                        {line.startsWith('Disease:') && (
-                          <span className={`inline-block px-2 py-1 rounded-md text-sm ${
-                            line.includes('Healthy') 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {line}
-                          </span>
-                        )}
-                        {!line.startsWith('Disease:') && line}
-                      </p>
-                    ))}
-                  </div>
+                  <p>
+                    <span className={`inline-block px-2 py-1 rounded-md text-sm ${
+                      detectionResult.disease === 'Healthy'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
+                      Disease: {detectionResult.disease}
+                    </span>
+                  </p>
+                  <p><strong>Severity:</strong> {detectionResult.severity}</p>
+                  <p><strong>Treatment:</strong> {detectionResult.treatment}</p>
                 </div>
               )}
             </div>

@@ -6,17 +6,6 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Initialize toast defaults - removed config and added ToastContainer
-// toast.configure({
-//     position: "top-right",
-//     autoClose: 5000,
-//     hideProgressBar: false,
-//     closeOnClick: true,
-//     pauseOnHover: true,
-//     draggable: true,
-//     progress: undefined,
-// });
-
 const GEMINI_API_KEY = import.meta.env.VITE_GEMINI_API_KEY; 
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
@@ -85,11 +74,23 @@ function UploadCropFormSimplified() {
     const [uploading, setUploading] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
     const location = useLocation();
-    const email = location.state?.email;
+    
+    const emailFromState = location.state?.email;
+    const email = emailFromState || localStorage.getItem("farmerEmail") || "";
+    useEffect(() => {
+        if (emailFromState) {
+            localStorage.setItem("farmerEmail", emailFromState);
+        }
+        if (!email) {
+            setError("Farmer email is missing. Please login again.");
+        }
+    }, [emailFromState, email]);
+
+
     const navigate = useNavigate();
     const [error, setError] = useState(null);
     const [cropNameError, setCropNameError] = useState('');
-     const listingsurl=`/farmer/crop-listings?email=${encodeURIComponent(email)}`;
+    const listingsurl=`/farmer/crop-listings?email=${encodeURIComponent(email)}`;
 
     const showErrorToast = (message) => {
         toast.error(message, {
@@ -102,7 +103,7 @@ function UploadCropFormSimplified() {
         });
     };
 
-    const showSuccessToast = (message, callback) => { // Added callback
+    const showSuccessToast = (message, callback) => {
         toast.success(message, {
             position: "top-right",
             autoClose: 2000,
@@ -110,7 +111,7 @@ function UploadCropFormSimplified() {
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
-            onClose: callback, // Execute callback on close
+            onClose: callback,
         });
     };
 
@@ -217,7 +218,7 @@ function UploadCropFormSimplified() {
             } else {
                 const parsedData = parseAnalysisResult(analysis.analysis);
                 setAnalysisData(parsedData);
-                showSuccessToast('Crop analyzed successfully!'); // Show success message
+                showSuccessToast('Crop analyzed successfully!');
             }
         } catch (error) {
             showErrorToast('Analysis failed: ' + error.message);
@@ -256,10 +257,9 @@ function UploadCropFormSimplified() {
             });
 
             showSuccessToast('Crop uploaded successfully!', () => {
-                navigate(listingsurl); // Redirect to the proper URL with email query param
+                navigate(listingsurl);
             });
 
-            // Reset form -  moved inside the success callback to ensure it happens after redirection if it occurs
             setCropName('');
             setQuantity('');
             setAddress('');
@@ -270,7 +270,7 @@ function UploadCropFormSimplified() {
 
         } catch (error) {
             showErrorToast('Upload failed: ' + (error.response?.data?.message || error.message));
-            setUploading(false); // keep this here
+            setUploading(false);
         } finally {
             setUploading(false);
         }
@@ -288,7 +288,6 @@ function UploadCropFormSimplified() {
     return (
         <div className="min-h-screen bg-green-50 flex justify-center items-center py-10 px-4">
             <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-2xl relative">
-                {/* Back Arrow Button */}
                 <button
                     onClick={handleBackClick}
                     className="absolute top-6 left-6 text-green-600 hover:text-green-800 transition-colors"
@@ -304,7 +303,6 @@ function UploadCropFormSimplified() {
 
                 <form className="space-y-6">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Left Column */}
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-gray-700 font-medium mb-1">
@@ -364,7 +362,6 @@ function UploadCropFormSimplified() {
                             </div>
                         </div>
 
-                        {/* Right Column */}
                         <div className="space-y-4">
                             <div>
                                 <label className="block text-gray-700 font-medium mb-1">
@@ -448,7 +445,7 @@ function UploadCropFormSimplified() {
                     </div>
                 </form>
             </div>
-            <ToastContainer position="bottom-center" />  {/* Added ToastContainer here */}
+            <ToastContainer position="bottom-center" />
         </div>
     );
 }

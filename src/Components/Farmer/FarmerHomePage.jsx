@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faLeaf,
@@ -65,7 +65,8 @@ function FarmerHomePage() {
       description: "Manage your crops - upload listings, view sales, and track bookings all in one place.",
       image: farmerShopImg,
       features: ["Upload Crops", "View Listings", "Track Sales", "Manage Bookings"],
-      action: () => navigate('/farmer/upload-crop')
+      action: () => navigate('/farmer/upload-crop', { state: { email: email } })
+
     },
     {
       title: "Crop Recommendation",
