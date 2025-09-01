@@ -115,7 +115,7 @@ function UploadCropFormSimplified() {
     };
 
     const handleBackClick = () => {
-        navigate('/FarmerHomePage', { state: { email } });
+        navigate('/farmer/shop', { state: { email } });
     };
 
     const handleImageChange = (file) => {
