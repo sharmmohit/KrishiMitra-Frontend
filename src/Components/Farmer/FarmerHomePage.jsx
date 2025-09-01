@@ -66,7 +66,6 @@ function FarmerHomePage() {
       image: farmerShopImg,
       features: ["Upload Crops", "View Listings", "Track Sales", "Manage Bookings"],
       action: () => navigate('/farmer/upload-crop', { state: { email: email } })
-
     },
     {
       title: "Crop Recommendation",
