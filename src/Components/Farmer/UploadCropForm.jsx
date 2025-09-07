@@ -110,7 +110,7 @@ function UploadCropFormSimplified() {
             closeOnClick: true,
             pauseOnHover: true,
             draggable: true,
-            onClose: callback, // Execute callback on close
+            onClose: callback, 
         });
     };
 
