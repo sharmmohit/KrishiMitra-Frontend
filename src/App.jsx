@@ -21,12 +21,13 @@ import BuyerChat from './Components/Buyer/BuyerChat';
 import CropRecommendation from './Components/Farmer/CropRecommendation';
 import PlantDiseaseDetection from './Components/Farmer/PlantDiseaseDetection';
 import FarmerShop from './Components/Farmer/FarmerShop';
+import CropPriceTracker from './Components/Farmer/CropPriceTracker';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<FarmerHomePage/>} />
+        <Route path="/" element={<FarmerHomePage />} />
         <Route path="/signin" element={<SignIn />} />
 
         {/* Registration */}
@@ -47,6 +48,7 @@ function App() {
         <Route path="/disease-prediction" element={<PlantDiseaseDetection />} />
         <Route path="/crop-recommendation" element={<CropRecommendation />} />
         <Route path="/farmer/shop" element={<FarmerShop />} />
+        <Route path="/crop-price-tracker" element={<CropPriceTracker />} />
 
         {/* Buyer routes */}
         <Route path="/buyer/cart" element={<BuyerCart />} />
