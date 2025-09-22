@@ -9,24 +9,29 @@ import FarmerHomePage from './Components/Farmer/FarmerHomePage';
 import UploadCropForm from './Components/Farmer/UploadCropForm';
 import MyCropListings from './Components/Farmer/MyCropListings';
 import BuyerCart from './Components/Buyer/BuyerCart';
-import BuyNowPage from './Components/Buyer/BuyNowPage'; // Import BuyNowPage
+import BuyNowPage from './Components/Buyer/BuyNowPage'; 
 import BuyerProfile from './Components/Buyer/BuyerProfile';
 import EditBuyerProfile from './Components/Buyer/EditBuyerProfile';
 import BuyerOrders from './Components/Buyer/BuyerOrders';
 import BookingsPage from './Components/Farmer/BookingsPage';
-import FarmerProfile from './Components/Farmer/FarmerProfile'; // add this import as it is used below
+import FarmerProfile from './Components/Farmer/FarmerProfile';
 import ViewListing from './Components/Farmer/ViewListing';
 import EditListing from './Components/Farmer/EditListing';
 import BuyerChat from './Components/Buyer/BuyerChat'; 
 import CropRecommendation from './Components/Farmer/CropRecommendation';
 import PlantDiseaseDetection from './Components/Farmer/PlantDiseaseDetection';
 import FarmerShop from './Components/Farmer/FarmerShop';
+import CropPriceTracker from './Components/Farmer/CropPriceTracker';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+<<<<<<< HEAD
         <Route path="/" element={<Landing/>} />
+=======
+        <Route path="/" element={<Landing />} />
+>>>>>>> upstream/main
         <Route path="/signin" element={<SignIn />} />
 
         {/* Registration */}
@@ -47,6 +52,7 @@ function App() {
         <Route path="/disease-prediction" element={<PlantDiseaseDetection />} />
         <Route path="/crop-recommendation" element={<CropRecommendation />} />
         <Route path="/farmer/shop" element={<FarmerShop />} />
+        <Route path="/crop-price-tracker" element={<CropPriceTracker />} />
 
         {/* Buyer routes */}
         <Route path="/buyer/cart" element={<BuyerCart />} />
