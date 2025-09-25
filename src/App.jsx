@@ -27,11 +27,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-<<<<<<< HEAD
         <Route path="/" element={<Landing/>} />
-=======
-        <Route path="/" element={<Landing />} />
->>>>>>> upstream/main
         <Route path="/signin" element={<SignIn />} />
 
         {/* Registration */}
