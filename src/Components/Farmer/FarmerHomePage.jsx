@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, Link, useLocation } from 'react-router-dom';
+import { useNavigate, Link} from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faEnvelope,
@@ -82,7 +82,7 @@ function FarmerHomePage() {
       localStorage.removeItem(`cart-${email}`);
       localStorage.removeItem("email");
     }
-    navigate("/signin");
+   navigate("/signin", { replace: true }); 
   };
 
   // Card data matching the image style
@@ -92,7 +92,7 @@ function FarmerHomePage() {
       description: "Manage your crops - upload listings, view sales, and track bookings all in one place.",
       image: farmerShopImg,
       features: ["Upload Crops", "View Listings", "Track Sales", "Manage Bookings"],
-      action: () => navigate('/farmer/shop')
+       action: () => navigate('/farmer/upload-crop', { state: { email: email } })
     },
     {
       title: "Crop Recommendation",
