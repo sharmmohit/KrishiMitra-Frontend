@@ -5,23 +5,23 @@ import SignIn from './Components/Landing/SignIn';
 import FarmerRegistrationForm from './Components/Landing/FarmerRegistrationForm';
 import BuyerRegistrationForm from './Components/Landing/BuyerRegistrationForm';
 import BuyerHomePage from './Components/Buyer/BuyerHomePage';
-import FarmerHomePage from '../../Farmer/FarmerHomePage';
-import UploadCropForm from '../../Farmer/UploadCropForm';
-import MyCropListings from '../../Farmer/MyCropListings';
+import FarmerHomePage from './Components/Farmer/FarmerHomePage'
+import UploadCropForm from './Components/Farmer/UploadCropForm'
+import MyCropListings from './Components/Farmer/MyCropListings';
 import BuyerCart from './Components/Buyer/BuyerCart';
 import BuyNowPage from './Components/Buyer/BuyNowPage'; 
 import BuyerProfile from './Components/Buyer/BuyerProfile';
 import EditBuyerProfile from './Components/Buyer/EditBuyerProfile';
 import BuyerOrders from './Components/Buyer/BuyerOrders';
-import BookingsPage from '../../Farmer/BookingsPage';
-import FarmerProfile from '../../Farmer/FarmerProfile';
-import ViewListing from '../../Farmer/ViewListing';
-import EditListing from '../../Farmer/EditListing';
+import BookingsPage from './Components/Farmer/BookingsPage';
+import FarmerProfile from './Components/Farmer/FarmerProfile';
+import ViewListing from './Components/Farmer/ViewListing';
+import EditListing from './Components/Farmer/EditListing';
 import BuyerChat from './Components/Buyer/BuyerChat'; 
-import CropRecommendation from '../../Farmer/CropRecommendation';
-import PlantDiseaseDetection from '../../Farmer/PlantDiseaseDetection';
-import FarmerShop from '../../Farmer/FarmerShop';
-import CropPriceTracker from '../../Farmer/CropPriceTracker';
+import CropRecommendation from './Components/Farmer/CropRecommendation';
+import PlantDiseaseDetection from './Components/Farmer/PlantDiseaseDetection';
+import FarmerShop from './Components/Farmer/FarmerShop';
+import CropPriceTracker from './Components/Farmer/CropPriceTracker';
 
 function App() {
   return (
