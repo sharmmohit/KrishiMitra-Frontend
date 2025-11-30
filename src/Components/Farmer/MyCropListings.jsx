@@ -49,11 +49,9 @@ function MyCropListings() {
           priceRange: listing.priceRange || null,
           qualityRating: listing.qualityRating || null,
           address: listing.address || 'Not specified',
-          listedOn: parseDate(listing.listedOn) || new Date(), // ✅ safer date
-          analysisDate: parseDate(listing.analysisDate),       // ✅ safer date
-          imageUrl: listing.imageData 
-            ? `data:image/jpeg;base64,${listing.imageData}`
-            : null
+          listedOn: parseDate(listing.listedOn) || new Date(), 
+          analysisDate: parseDate(listing.analysisDate),       
+         imageUrl: listing.imageBase64 || null
         }));
 
         setListings(listingsWithData);
