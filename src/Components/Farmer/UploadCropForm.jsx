@@ -255,7 +255,7 @@ function UploadCropFormSimplified() {
     formData.append('quality', analysisData.quality);
     formData.append('priceRange', analysisData.priceRange);
 
-    await axios.post('http://localhost:8080/api/crops/upload', formData, {
+    await axios.post('https://krishimitra-backend-1-zjwf.onrender.com/api/crops/upload', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
 

@@ -32,7 +32,7 @@ function MyCropListings() {
         const encodedEmail = encodeURIComponent(email);
 
         const response = await axios.get(
-          `http://localhost:8080/api/crops/farmer/${encodedEmail}/listings`,
+          `https://krishimitra-backend-1-zjwf.onrender.com/api/crops/farmer/${encodedEmail}/listings`,
           {
             headers: { 'Authorization': `Bearer ${token}` }
           }
@@ -75,7 +75,7 @@ function MyCropListings() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:8080/api/crops/${id}`, {
+      await axios.delete(`https://krishimitra-backend-1-zjwf.onrender.com/api/crops/${id}`, {
         headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
       });
 
@@ -90,7 +90,7 @@ function MyCropListings() {
   const handleMarkAsSold = async (id) => {
     try {
       await axios.patch(
-        `http://localhost:8080/api/crops/${id}/status`,
+        `https://krishimitra-backend-1-zjwf.onrender.com/api/crops/${id}/status`,
         { status: 'sold' },
         { headers: { 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }}
       );

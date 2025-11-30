@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import '../../index.css';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLeaf, faEye, faEyeSlash, faArrowLeft, faHandshake, faSeedling } from '@fortawesome/free-solid-svg-icons';
+import { faLeaf, faEye, faEyeSlash, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-// Import your background image - replace with your actual image path
 import backgroundImage from '../../assets/signin.png';
 
 function SignInForm() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [role, setRole] = useState('farmer'); // NEW ROLE STATE
     const [showPassword, setShowPassword] = useState(false);
     const [emailError, setEmailError] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -22,234 +22,176 @@ function SignInForm() {
         const params = new URLSearchParams(location.search);
         if (params.get('registered') === 'true') {
             toast.success('Successfully registered! Please sign in.', {
-                position: 'top-right',
                 autoClose: 3000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
             });
         }
     }, [location.search]);
 
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
+    const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-    const validatePassword = (password) => {
-        // Updated password validation: at least 8 characters, one uppercase, one lowercase, one number, one special character
-        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(password);
-    };
+    const validatePassword = (password) =>
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
 
     const handleSignIn = async (e) => {
         e.preventDefault();
+
         let isValid = true;
 
         if (!validateEmail(email)) {
-            setEmailError('Please enter a valid email address.');
+            setEmailError("Please enter a valid email.");
             isValid = false;
-        } else {
-            setEmailError('');
-        }
+        } else setEmailError('');
 
         if (!password) {
-            setPasswordError('Password is required.');
+            setPasswordError("Password is required.");
             isValid = false;
-        } else if (!validatePassword(password)) {
-            setPasswordError(
-                'Password must be at least 8 characters long and contain uppercase, lowercase, number, and a special character.'
-            );
-            isValid = false;
-        } else {
-            setPasswordError('');
-        }
+        } else setPasswordError('');
 
-        if (isValid) {
-            try {
-                const response = await fetch('http://localhost:8080/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password }),
-                });
+        if (!isValid) return;
 
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('Login successful. Role:', data.role);
-                    console.log('Login successful. Role:', data.email);
+        try {
+            // 🔥 Correct API endpoint based on role
+            const response = await fetch(`https://krishimitra-backend-1-zjwf.onrender.com/api/login/${role}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
 
-                    // ✅ Store email in localStorage
-                    localStorage.setItem("email", data.email);
-                    console.log("Saved email to localStorage:", localStorage.getItem("email"));
-                    localStorage.setItem("role", data.role);
-                    console.log("Saved Role to localStorage:", localStorage.getItem("role"));
-                    
-                    toast.success('Login successful!', {
-                        position: "top-right",
-                        autoClose: 1500,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    });
+            const result = await response.json();
 
-                    setTimeout(() => {
-                        if (data.role === 'farmer') {
-                            navigate('/FarmerHomePage', { state: { email: data.email } });
-                        } else if (data.role === 'buyer') {
-                            navigate('/BuyerHomePage', { state: { email: data.email } });
-                        } else {
-                            navigate('/');
-                        }
-                        
-                    }, 3000);
-
-                } else {
-                    const errorText = await response.text();
-                    console.error(`Login failed: ${errorText}`);
-                    toast.error(`Login failed: ${errorText}`, {
-                        position: "top-right",
-                        autoClose: 1500,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                    });
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                toast.error('An error occurred. Please try again.', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
+            if (!response.ok) {
+                toast.error(result.message || "Login failed.");
+                return;
             }
-        }
-    };
 
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
+            // Buyer sends { buyer: {} }   | Farmer sends { data: {} }
+            const user = result.buyer || result.data;
+
+            localStorage.setItem("email", user.email);
+            localStorage.setItem("role", user.role);
+            localStorage.setItem("token", result.token);
+
+            toast.success("Login successful!", { autoClose: 1500 });
+
+            setTimeout(() => {
+                if (user.role === "farmer") {
+                    navigate("/FarmerHomePage", { state: { email: user.email } });
+                } else {
+                    navigate("/BuyerHomePage", { state: { email: user.email } });
+                }
+            }, 1500);
+
+        } catch (err) {
+            console.error(err);
+            toast.error("Something went wrong. Try again.");
+        }
     };
 
     return (
-        <div 
+        <div
             className="min-h-screen flex justify-center items-center p-4 md:p-10 relative"
             style={{
                 backgroundImage: `url(${backgroundImage})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                backgroundRepeat: 'no-repeat'
+                backgroundPosition: 'center'
             }}
         >
-            {/* Background overlay with blur and opacity */}
-            
-            
             <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200 max-w-md w-full animate-fade-in z-10">
-                {/* Header with back arrow */}
+
+                {/* Header */}
                 <div className="flex items-center mb-4">
-                    <button 
-                        onClick={() => navigate('/')}
-                        className="text-green-600 hover:text-green-800 mr-2"
-                    >
+                    <button onClick={() => navigate('/')} className="text-green-600 hover:text-green-800 mr-2">
                         <FontAwesomeIcon icon={faArrowLeft} size="lg" />
                     </button>
                     <div className="text-center flex-grow">
                         <div className="flex items-center justify-center mb-2">
-                            <div className="relative">
-                                <FontAwesomeIcon 
-                                    icon={faLeaf} 
-                                    size="2x" 
-                                    className="text-green-600 animate-pulse shadow-md rounded-full bg-white p-2" 
-                                />
-                                
-                            </div>
+                            <FontAwesomeIcon 
+                                icon={faLeaf} 
+                                size="2x" 
+                                className="text-green-600 animate-pulse shadow-md rounded-full bg-white p-2" 
+                            />
                         </div>
                         <h1 className="text-2xl font-bold text-green-700">Krishiमित्र</h1>
                         <p className="text-gray-600">It's good to have you back!</p>
                     </div>
-                    <div className="w-8"></div> {/* Spacer for alignment */}
+                    <div className="w-8"></div>
                 </div>
 
-                {/* Sign In Form */}
+                {/* LOGIN FORM */}
                 <form onSubmit={handleSignIn} className="space-y-4">
+
+                    {/* Role Dropdown */}
                     <div>
-                        <label
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                            htmlFor="email"
-                        >
-                            Email Address
+                        <label className="block text-gray-700 text-sm font-bold mb-2">
+                            Login As
                         </label>
+                        <select
+                            className="border p-2 rounded w-full border-green-300 focus:border-green-500"
+                            value={role}
+                            onChange={(e) => setRole(e.target.value)}
+                        >
+                            <option value="farmer">Farmer</option>
+                            <option value="buyer">Buyer</option>
+                        </select>
+                    </div>
+
+                    {/* Email */}
+                    <div>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Email Address</label>
                         <input
-                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${emailError ? 'border-red-500' : 'border-green-300 focus:border-green-500'
-                                }`}
-                            id="email"
+                            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${
+                                emailError ? 'border-red-500' : 'border-green-300 focus:border-green-500'
+                            }`}
                             type="email"
                             placeholder="Email Id"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            required
                         />
-                        {emailError && (
-                            <p className="text-red-500 text-xs italic">{emailError}</p>
-                        )}
+                        {emailError && <p className="text-red-500 text-xs">{emailError}</p>}
                     </div>
+
+                    {/* Password */}
                     <div>
-                        <label
-                            className="block text-gray-700 text-sm font-bold mb-2"
-                            htmlFor="password"
-                        >
-                            Password
-                        </label>
+                        <label className="block text-gray-700 text-sm font-bold mb-2">Password</label>
                         <div className="relative">
                             <input
-                                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${passwordError ? 'border-red-500' : 'border-green-300 focus:border-green-500'
-                                    }`}
-                                id="password"
+                                className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 ${
+                                    passwordError ? 'border-red-500' : 'border-green-300 focus:border-green-500'
+                                }`}
                                 type={showPassword ? 'text' : 'password'}
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                required
                             />
                             <button
                                 type="button"
-                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 focus:outline-none"
-                                onClick={togglePasswordVisibility}
+                                className="absolute inset-y-0 right-0 pr-3"
+                                onClick={() => setShowPassword(!showPassword)}
                             >
-                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} className="h-5 w-5" />
+                                <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
                             </button>
                         </div>
-                        {passwordError && (
-                            <p className="text-red-500 text-xs italic">{passwordError}</p>
-                        )}
+                        {passwordError && <p className="text-red-500 text-xs">{passwordError}</p>}
                     </div>
+
                     <button
                         type="submit"
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full transition-colors duration-300"
+                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded w-full"
                     >
                         Sign In
                     </button>
+
                     <div className="text-center mt-4">
                         <span className="text-gray-600">New user? </span>
-                        <Link
-                            to="/"
-                            className="font-bold text-sm text-green-500 hover:text-green-800"
-                        >
+                        <Link to="/" className="font-bold text-sm text-green-500 hover:text-green-800">
                             Register here
                         </Link>
                     </div>
+
                 </form>
+
                 <ToastContainer />
+
             </div>
         </div>
     );

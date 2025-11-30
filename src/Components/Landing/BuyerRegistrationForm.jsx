@@ -119,7 +119,7 @@ function BuyerRegistrationForm() {
         setIsSubmitting(true);
         
         try {
-            const response = await fetch('http://localhost:8080/api/register/buyer', {
+            const response = await fetch('https://krishimitra-backend-1-zjwf.onrender.com/api/register/buyer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

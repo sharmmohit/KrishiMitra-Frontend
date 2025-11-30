@@ -1,3 +1,5 @@
+// src/components/FarmerRegistrationForm.jsx
+
 import React, { useState } from 'react';
 import '../../index.css';
 import { useNavigate, Link } from 'react-router-dom';
@@ -15,17 +17,13 @@ function FarmerRegistrationForm() {
         location: '',
         contactNumber: ''
     });
-    const [errors, setErrors] = useState({
-        name: '',
-        email: '',
-        password: '',
-        location: '',
-        contactNumber: ''
-    });
+    const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const navigate = useNavigate();
 
+    // --- Validation Functions ---
+    // (Validation functions kept as is, assuming they are correct)
     const validateName = (name) => {
         const nameRegex = /^[a-zA-Z\s]{2,50}$/;
         if (!name.trim()) return 'Name is required';
@@ -71,6 +69,7 @@ function FarmerRegistrationForm() {
             [name]: value
         }));
         
+        // Clear error message on change
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
@@ -89,6 +88,7 @@ function FarmerRegistrationForm() {
         };
         
         setErrors(newErrors);
+        // Returns true if there are NO errors
         return !Object.values(newErrors).some(error => error);
     };
 
@@ -106,31 +106,29 @@ function FarmerRegistrationForm() {
         setIsSubmitting(true);
         
         try {
-            const response = await fetch('http://localhost:8080/api/register/farmer', {
+            // 🎯 CORRECTED API ENDPOINT AND CONNECTION
+            const response = await fetch('https://krishimitra-backend-1-zjwf.onrender.com/api/register/farmer', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    name: formData.name,
-                    email: formData.email,
-                    password: formData.password,
-                    location: formData.location,
-                    contactNumber: formData.contactNumber,
-                }),
+                body: JSON.stringify(formData),
             });
 
             if (response.ok) {
+                // Successful registration (200-299 status code)
                 const result = await response.json();
                 console.log('Success:', result);
-                toast.success('Successfully registered! Redirecting to login...', {
+                toast.success('Successfully registered! Redirecting to sign in...', {
                     position: "top-right",
                     autoClose: 3000,
                 });
+                // Redirect to signin after 3 seconds
                 setTimeout(() => {
                     navigate('/signin');
                 }, 3000);
             } else {
+                // Handle server-side validation/business logic errors (e.g., 400 Bad Request, Email already exists)
                 const errorData = await response.json();
                 console.error('Failed to register farmer:', errorData);
                 toast.error(errorData.message || 'Registration failed. Please try again.', {
@@ -139,11 +137,19 @@ function FarmerRegistrationForm() {
                 });
             }
         } catch (error) {
+            // 🚨 Critical Network Error Handler (Handles CORS issues, Server offline, "Failed to fetch")
             console.error('Error:', error);
-            toast.error('Network error. Please try again.', {
-                position: "top-right",
-                autoClose: 3000,
-            });
+            if (error.message.includes("Failed to fetch")) {
+                toast.error('Network Error: Could not connect to the backend server. Is the server running on port 8080?', {
+                    position: "top-right",
+                    autoClose: 6000,
+                });
+            } else {
+                toast.error('An unexpected error occurred during registration.', {
+                    position: "top-right",
+                    autoClose: 5000,
+                });
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -177,7 +183,7 @@ function FarmerRegistrationForm() {
                 </div>
 
                 <form onSubmit={handleRegister} className="space-y-4">
-                    {/* Name */}
+                    {/* Input fields remain the same */}
                     <div className="relative">
                         <FontAwesomeIcon icon={faUser} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600" />
                         <input
@@ -192,7 +198,6 @@ function FarmerRegistrationForm() {
                         {errors.name && <p className="text-red-500 text-xs italic mt-1">{errors.name}</p>}
                     </div>
 
-                    {/* Email */}
                     <div className="relative">
                         <FontAwesomeIcon icon={faEnvelope} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600" />
                         <input
@@ -207,7 +212,6 @@ function FarmerRegistrationForm() {
                         {errors.email && <p className="text-red-500 text-xs italic mt-1">{errors.email}</p>}
                     </div>
 
-                    {/* Password */}
                     <div className="relative">
                         <FontAwesomeIcon icon={faLock} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600" />
                         <input
@@ -230,7 +234,6 @@ function FarmerRegistrationForm() {
                         {errors.password && <p className="text-red-500 text-xs italic mt-1">{errors.password}</p>}
                     </div>
 
-                    {/* Location */}
                     <div className="relative">
                         <FontAwesomeIcon icon={faMapMarkerAlt} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600" />
                         <input
@@ -245,7 +248,6 @@ function FarmerRegistrationForm() {
                         {errors.location && <p className="text-red-500 text-xs italic mt-1">{errors.location}</p>}
                     </div>
 
-                    {/* Contact Number */}
                     <div className="relative">
                         <FontAwesomeIcon icon={faPhone} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-600" />
                         <input
