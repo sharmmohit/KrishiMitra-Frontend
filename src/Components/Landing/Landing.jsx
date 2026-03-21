@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faTractor, faShoppingCart, faRobot, faChartLine, 
   faMobileAlt, faLeaf, faMapMarkerAlt, faPhoneAlt, 
-  faEnvelope, faNewspaper, faHandshake, faSeedling
+  faEnvelope, faNewspaper
 } from '@fortawesome/free-solid-svg-icons';
 import { 
   faFacebookF, faTwitter, faInstagram, faLinkedinIn 
@@ -19,8 +19,44 @@ import agri4 from '../../assets/agriculture4.png';
 const agricultureImages = [agri1, agri2, agri3, agri4];
 
 function Landing() {
+  const [activeStep, setActiveStep] = useState(0);
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const steps = [
+    {
+      n: '01',
+      hi: 'Register करें',
+      en: 'Register & Verify',
+      desc: 'Aadhaar से 2-मिनट KYC। Farmer या Buyer — profile तुरंत active।',
+      icon: '🌱',
+      code: '✓ Aadhaar verified\n✓ Bank account linked\n✓ GPS location set\n→ Profile is now LIVE!'
+    },
+    {
+      n: '02',
+      hi: 'Listing डालें',
+      en: 'List Your Crops',
+      desc: 'Photo upload करें, AI quality score पाएं, fair price suggestion मिलेगी।',
+      icon: '📸',
+      code: '🌾 Wheat · 50 Qtl\nAI Score: 94/100 ✓\nGrade: A Premium\n₹2,340/Qtl suggested'
+    },
+    {
+      n: '03',
+      hi: 'Negotiate करें',
+      en: 'Negotiate & Close',
+      desc: 'Multiple buyers की bids देखें, chat करें, best offer accept करें।',
+      icon: '💬',
+      code: 'Buyer A: ₹2,350/Qtl ⬆\nBuyer B: ₹2,330/Qtl\nBuyer C: ₹2,360/Qtl ⭐\n→ Best offer accepted!'
+    },
+    {
+      n: '04',
+      hi: 'Payment पाएं',
+      en: 'Get Paid Instantly',
+      desc: 'Escrow में secured payment — delivery confirm होते ही account में credit।',
+      icon: '💰',
+      code: '✓ ₹1,18,000 in escrow\n🚚 Pickup: Tomorrow 8AM\n✓ Delivered & confirmed\n✓ ₹1,18,000 CREDITED!'
+    },
+  ];
 
   useEffect(() => {
     // Load Google Translate script
@@ -41,7 +77,7 @@ function Landing() {
       }
     };
 
-    // Fetch agriculture news from NewsAPI
+    // Fetch agriculture news
     const fetchNews = async () => {
       try {
         const response = await fetch(
@@ -74,195 +110,349 @@ function Landing() {
 
     fetchNews();
 
+    // Scroll reveal observer
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    const revealElements = document.querySelectorAll('.reveal-left, .reveal-right, .reveal-up');
+    revealElements.forEach(el => observer.observe(el));
+
     return () => {
-      document.body.removeChild(script);
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+      observer.disconnect();
     };
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 flex flex-col items-center overflow-x-hidden">
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(135deg, #f8f9fa 0%, #e8f5e9 100%)' }}>
       {/* Google Translate Widget */}
-      <div id="google_translate_element" className="fixed bottom-4 right-4 z-50 bg-white p-2 rounded shadow-lg"></div>
+      <div id="google_translate_element" style={{ position: 'fixed', bottom: '20px', right: '20px', zIndex: 1000, background: 'white', padding: '8px', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.1)' }}></div>
 
       {/* Header */}
-      <header className="flex justify-between items-center p-6 w-full max-w-7xl mx-auto">
-        {/* Updated Logo */}
-        <div className="flex items-center">
-          <div className="relative">
-             <FontAwesomeIcon 
-                                                 icon={faLeaf} 
-                                                 size="2xl" 
-                                                 className="text-green-600 mr-3" 
-                                             />
-                                             <span className="text-3xl font-bold text-green-700">Krishiमित्र</span>
-                                         </div>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 40px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <FontAwesomeIcon icon={faLeaf} size="2x" style={{ color: '#2e7d32', marginRight: '12px' }} />
+          <span style={{ fontSize: '28px', fontWeight: 'bold', color: '#1b5e20' }}>Krishiमित्र</span>
         </div>
-        <Link to="/signin" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300">
+        <Link to="/signin" style={{ background: '#2e7d32', color: 'white', padding: '10px 24px', borderRadius: '8px', textDecoration: 'none', fontWeight: '600', transition: 'all 0.3s' }}>
           Sign In
         </Link>
       </header>
 
-      {/* Main Section */}
-      <main className="flex-grow flex flex-col justify-center items-center text-center px-4 md:px-8 lg:px-16 max-w-7xl mx-auto">
-        {/* Title Section */}
-        <div className="max-w-3xl mb-8">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-green-900 leading-tight">
+      {/* Hero Section */}
+      <main style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '40px 20px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '800px', marginBottom: '48px' }}>
+          <h1 style={{ fontSize: '48px', fontWeight: '800', marginBottom: '16px', color: '#1b5e20', lineHeight: '1.2' }}>
             Welcome to Krishiमित्र
             <br />
-            Connecting Farmers and Buyers
+            <span style={{ color: '#2e7d32' }}>Connecting Farmers and Buyers</span>
           </h1>
-          <p className="text-lg md:text-xl text-gray-700">
+          <p style={{ fontSize: '18px', color: '#4a5b4a', lineHeight: '1.6' }}>
             Join our marketplace to buy and sell fresh, quality crops directly.
           </p>
         </div>
 
-        {/* Register Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12 w-full max-w-3xl">
-          {/* Register as Farmer */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center border border-gray-300 transform hover:scale-105 h-full">
-            <div className="flex items-center justify-center h-12 w-12 rounded-full bg-green-100 text-green-500 mb-4">
-              <FontAwesomeIcon icon={faTractor} size="lg" />
+        {/* Register Cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', maxWidth: '800px', width: '100%', marginBottom: '60px' }}>
+          <Link to="/register/farmer" style={{ textDecoration: 'none' }}>
+            <div style={{ background: 'white', padding: '32px', borderRadius: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', textAlign: 'center', transition: 'all 0.3s', cursor: 'pointer', border: '1px solid #e0e0e0' }}>
+              <div style={{ width: '60px', height: '60px', background: '#e8f5e9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <FontAwesomeIcon icon={faTractor} size="xl" style={{ color: '#2e7d32' }} />
+              </div>
+              <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px', color: '#1b5e20' }}>Register as a Farmer</h2>
+              <p style={{ color: '#6b7280', marginBottom: '20px' }}>Sell your crops directly to buyers</p>
+              <span style={{ display: 'inline-block', background: '#2e7d32', color: 'white', padding: '10px 24px', borderRadius: '8px', fontWeight: '500' }}>Register Now →</span>
             </div>
-            <h2 className="text-lg font-semibold text-gray-700">Register as a Farmer</h2>
-            <p className="text-gray-500 text-sm mb-4">Sell your crops directly.</p>
-            <Link to="/register/farmer" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300 text-sm">
-              Register as Farmer
-            </Link>
-          </div>
+          </Link>
 
-          {/* Register as Buyer */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center border border-gray-300 transform hover:scale-105 h-full">
-            <div className="flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 text-blue-500 mb-4">
-              <FontAwesomeIcon icon={faShoppingCart} size="lg" />
+          <Link to="/register/buyer" style={{ textDecoration: 'none' }}>
+            <div style={{ background: 'white', padding: '32px', borderRadius: '16px', boxShadow: '0 4px 6px rgba(0,0,0,0.07)', textAlign: 'center', transition: 'all 0.3s', cursor: 'pointer', border: '1px solid #e0e0e0' }}>
+              <div style={{ width: '60px', height: '60px', background: '#e3f2fd', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <FontAwesomeIcon icon={faShoppingCart} size="xl" style={{ color: '#1976d2' }} />
+              </div>
+              <h2 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '8px', color: '#1b5e20' }}>Register as a Buyer</h2>
+              <p style={{ color: '#6b7280', marginBottom: '20px' }}>Find and purchase quality crops</p>
+              <span style={{ display: 'inline-block', background: '#1976d2', color: 'white', padding: '10px 24px', borderRadius: '8px', fontWeight: '500' }}>Register Now →</span>
             </div>
-            <h2 className="text-lg font-semibold text-gray-700">Register as a Buyer</h2>
-            <p className="text-gray-500 text-sm mb-4">Find and purchase crops.</p>
-            <Link to="/register/buyer" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition-colors duration-300 text-sm">
-              Register as Buyer
-            </Link>
-          </div>
+          </Link>
         </div>
       </main>
 
       {/* Features Section */}
-      <div className="w-full bg-gradient-to-br from-green-50 to-green-100 py-12">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 mb-10 text-center">
-          <h2 className="text-3xl font-bold text-green-800 mb-4">Why Choose Krishiमित्र?</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+      <div style={{ background: 'white', padding: '80px 20px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '36px', fontWeight: '700', marginBottom: '16px', color: '#1b5e20' }}>Why Choose Krishiमित्र?</h2>
+          <p style={{ fontSize: '18px', color: '#6b7280', marginBottom: '48px', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
             Our platform brings innovation to agriculture with cutting-edge features designed for modern farmers and buyers.
           </p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
+            <div style={{ padding: '32px', background: '#f9fafb', borderRadius: '16px', transition: 'all 0.3s' }}>
+              <div style={{ width: '64px', height: '64px', background: '#ede7f6', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <FontAwesomeIcon icon={faRobot} size="xl" style={{ color: '#7c4dff' }} />
+              </div>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '12px', color: '#1f2937' }}>AI Powered Crop Quality Analysis</h3>
+              <p style={{ color: '#6b7280', lineHeight: '1.6' }}>Leverage AI to assess crop quality, ensuring better transparency and trust.</p>
+            </div>
+
+            <div style={{ padding: '32px', background: '#f9fafb', borderRadius: '16px', transition: 'all 0.3s' }}>
+              <div style={{ width: '64px', height: '64px', background: '#fff3e0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <FontAwesomeIcon icon={faChartLine} size="xl" style={{ color: '#f57c00' }} />
+              </div>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '12px', color: '#1f2937' }}>Market Trends & Pricing</h3>
+              <p style={{ color: '#6b7280', lineHeight: '1.6' }}>Stay updated with real-time market trends for smarter buying and selling.</p>
+            </div>
+
+            <div style={{ padding: '32px', background: '#f9fafb', borderRadius: '16px', transition: 'all 0.3s' }}>
+              <div style={{ width: '64px', height: '64px', background: '#e0f2fe', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+                <FontAwesomeIcon icon={faMobileAlt} size="xl" style={{ color: '#0284c7' }} />
+              </div>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '12px', color: '#1f2937' }}>User-Friendly Application</h3>
+              <p style={{ color: '#6b7280', lineHeight: '1.6' }}>Enjoy a seamless and intuitive experience for easy participation.</p>
+            </div>
+          </div>
         </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4 md:px-8">
-          {/* AI Crop Quality Analysis */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-gray-700 text-center border border-gray-200">
-            <div className="h-16 w-16 rounded-full bg-purple-100 text-purple-500 flex items-center justify-center mb-4">
-              <FontAwesomeIcon icon={faRobot} size="lg" />
-            </div>
-            <h2 className="text-xl font-semibold mb-2">AI Powered Crop Quality Analysis</h2>
-            <p className="text-sm">Leverage AI to assess crop quality, ensuring better transparency and trust.</p>
+      </div>
+
+      {/* How It Works Section */}
+      <div style={{ background: '#fef7e8', padding: '80px 20px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <span style={{ display: 'inline-block', background: 'rgba(200,98,42,0.1)', color: '#c8622a', padding: '6px 16px', borderRadius: '100px', fontSize: '12px', fontWeight: '500', marginBottom: '16px' }}>
+              कैसे काम करता है
+            </span>
+            <h2 style={{ fontSize: '36px', fontWeight: '700', color: '#3d2b1f', marginBottom: '16px' }}>
+              4 steps में <span style={{ color: '#c8622a' }}>deal complete</span>
+            </h2>
+            <p style={{ fontSize: '16px', color: '#6b5a4e', maxWidth: '500px', margin: '0 auto' }}>
+              कोई बिचौलिया नहीं। कोई hidden fee नहीं। Farm से buyer तक सीधा रास्ता।
+            </p>
           </div>
 
-          {/* Market Trends */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-gray-700 text-center border border-gray-200">
-            <div className="h-16 w-16 rounded-full bg-orange-100 text-orange-500 flex items-center justify-center mb-4">
-              <FontAwesomeIcon icon={faChartLine} size="lg" />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '60px', alignItems: 'start' }}>
+            {/* Steps List */}
+            <div>
+              {steps.map((step, index) => (
+                <div
+                  key={step.n}
+                  onClick={() => setActiveStep(index)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '16px',
+                    padding: '16px 20px',
+                    marginBottom: '8px',
+                    borderRadius: '12px',
+                    background: activeStep === index ? 'rgba(200,98,42,0.05)' : 'transparent',
+                    border: activeStep === index ? '1.5px solid rgba(200,98,42,0.2)' : '1.5px solid transparent',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s'
+                  }}
+                >
+                  <div style={{
+                    width: '40px',
+                    height: '40px',
+                    borderRadius: '10px',
+                    background: activeStep === index ? 'rgba(200,98,42,0.15)' : 'rgba(200,98,42,0.08)',
+                    border: `1px solid ${activeStep === index ? 'rgba(200,98,42,0.4)' : 'rgba(200,98,42,0.15)'}`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    color: '#c8622a'
+                  }}>
+                    {step.n}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px', color: activeStep === index ? '#3d2b1f' : '#8b7a6a' }}>
+                      {step.hi} <span style={{ fontSize: '13px', fontWeight: 'normal', color: '#8b7a6a' }}>({step.en})</span>
+                    </h3>
+                    {activeStep === index && (
+                      <p style={{ fontSize: '13px', color: '#6b5a4e', lineHeight: '1.5', marginTop: '8px' }}>
+                        {step.desc}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-            <h2 className="text-xl font-semibold mb-2">Market Trends & Pricing</h2>
-            <p className="text-sm">Stay updated with real-time market trends for smarter buying and selling.</p>
-          </div>
 
-          {/* User-Friendly Application */}
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col items-center text-gray-700 text-center border border-gray-200">
-            <div className="h-16 w-16 rounded-full bg-indigo-100 text-indigo-500 flex items-center justify-center mb-4">
-              <FontAwesomeIcon icon={faMobileAlt} size="lg" />
+            {/* Live Preview Card */}
+            <div style={{ position: 'relative' }}>
+              <div style={{
+                background: 'white',
+                borderRadius: '24px',
+                padding: '32px',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.08)',
+                border: '1px solid rgba(0,0,0,0.05)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
+                  <div style={{
+                    width: '56px',
+                    height: '56px',
+                    borderRadius: '16px',
+                    background: 'rgba(200,98,42,0.1)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '28px'
+                  }}>
+                    {steps[activeStep].icon}
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '11px', color: '#c8622a', fontFamily: 'monospace', marginBottom: '4px' }}>
+                      STEP {steps[activeStep].n}
+                    </div>
+                    <div style={{ fontSize: '18px', fontWeight: '600', color: '#3d2b1f' }}>
+                      {steps[activeStep].hi}
+                    </div>
+                  </div>
+                  <div style={{ marginLeft: 'auto', background: '#c8622a', color: 'white', padding: '4px 12px', borderRadius: '100px', fontSize: '10px', fontWeight: 'bold' }}>
+                    LIVE
+                  </div>
+                </div>
+
+                {/* Progress Bars */}
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '24px' }}>
+                  {steps.map((_, i) => (
+                    <div key={i} style={{ flex: 1, height: '4px', background: '#e5e7eb', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{
+                        height: '100%',
+                        background: 'linear-gradient(90deg, #c8622a, #e67e22)',
+                        width: i <= activeStep ? '100%' : '0%',
+                        transition: 'width 0.5s ease'
+                      }} />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Terminal */}
+                <div style={{
+                  background: '#1f2937',
+                  borderRadius: '12px',
+                  padding: '20px',
+                  fontFamily: 'monospace',
+                  fontSize: '12px',
+                  lineHeight: '1.6',
+                  color: '#e5e7eb'
+                }}>
+                  <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ef4444' }} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b' }} />
+                    <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#10b981' }} />
+                  </div>
+                  <pre style={{ margin: 0, whiteSpace: 'pre-wrap', fontFamily: 'monospace', fontSize: '11px' }}>
+                    {steps[activeStep].code}
+                  </pre>
+                </div>
+
+                {/* Metrics */}
+                <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                  <div style={{ flex: 1, background: '#f9fafb', padding: '12px', borderRadius: '12px' }}>
+                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>Today's Wheat</div>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#c8622a' }}>₹2,340/Qtl</div>
+                  </div>
+                  <div style={{ flex: 1, background: '#f9fafb', padding: '12px', borderRadius: '12px' }}>
+                    <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>Buyers Online</div>
+                    <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#c8622a' }}>1,247</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating Cards */}
+              <div style={{
+                position: 'absolute',
+                left: '-20px',
+                top: '50px',
+                background: 'white',
+                padding: '12px 16px',
+                borderRadius: '12px',
+                boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
+                border: '1px solid rgba(200,98,42,0.2)',
+                animation: 'float 3s ease-in-out infinite'
+              }}>
+                <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>Punjab Wheat</div>
+                <div style={{ fontSize: '18px', fontWeight: 'bold', color: '#3d2b1f' }}>₹2,360</div>
+                <div style={{ fontSize: '10px', color: '#22c55e' }}>▲ +1.8% today</div>
+              </div>
+
+              <div style={{
+                position: 'absolute',
+                right: '-20px',
+                bottom: '80px',
+                background: 'white',
+                padding: '12px 16px',
+                borderRadius: '12px',
+                boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
+                border: '1px solid rgba(212,148,26,0.2)',
+                animation: 'float 4s ease-in-out infinite 1s'
+              }}>
+                <div style={{ fontSize: '10px', color: '#6b7280', marginBottom: '4px' }}>New Deal</div>
+                <div style={{ fontSize: '13px', fontWeight: 'bold', color: '#d4941a' }}>🤝 50 Qtl Maize</div>
+                <div style={{ fontSize: '10px', color: '#6b7280' }}>Bihar → Delhi</div>
+              </div>
             </div>
-            <h2 className="text-xl font-semibold mb-2">User-Friendly Application</h2>
-            <p className="text-sm">Enjoy a seamless and intuitive experience for easy participation.</p>
           </div>
         </div>
       </div>
 
       {/* Agriculture in Action Section */}
-      <div className="w-full bg-gradient-to-br from-green-50 to-green-100 py-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 text-center">
-          <h2 className="text-3xl font-bold text-green-800 mb-4">Agriculture in Action</h2>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
+      <div style={{ background: 'white', padding: '80px 20px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '36px', fontWeight: '700', marginBottom: '16px', color: '#1b5e20' }}>Agriculture in Action</h2>
+          <p style={{ fontSize: '18px', color: '#6b7280', marginBottom: '48px', maxWidth: '600px', marginLeft: 'auto', marginRight: 'auto' }}>
             See the vibrant community of farmers and buyers making agriculture thrive through our platform.
           </p>
           
-          {/* Animated Image Scroller */}
-          <div className="relative h-72 w-full overflow-hidden mb-8">
-            <div className="absolute flex space-x-8 animate-scroll">
-              {agricultureImages.map((img, index) => (
-                <div key={index} className="flex-shrink-0 h-72 w-72 rounded-xl overflow-hidden shadow-lg border-4 border-white transform hover:scale-105 transition-transform duration-300">
-                  <img src={img} alt={`Agriculture ${index}`} className="h-full w-full object-cover" />
-                </div>
-              ))}
-              {/* Duplicate for infinite loop */}
-              {agricultureImages.map((img, index) => (
-                <div key={`dup-${index}`} className="flex-shrink-0 h-72 w-72 rounded-xl overflow-hidden shadow-lg border-4 border-white">
-                  <img src={img} alt={`Agriculture ${index}`} className="h-full w-full object-cover" />
+          <div style={{ position: 'relative', height: '320px', width: '100%', overflow: 'hidden', marginBottom: '40px' }}>
+            <div style={{ display: 'flex', gap: '24px', position: 'absolute', animation: 'scroll 30s linear infinite' }}>
+              {[...agricultureImages, ...agricultureImages].map((img, index) => (
+                <div key={index} style={{ flexShrink: 0, width: '280px', height: '280px', borderRadius: '16px', overflow: 'hidden', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                  <img src={img} alt={`Agriculture ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
               ))}
             </div>
           </div>
           
-          {/* Call to Action */}
-          <Link 
-            to="/register" 
-            className="inline-block bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-8 rounded-md transition-colors duration-300 text-lg mt-8"
-          >
-            Join Our Growing Community
+          <Link to="/register" style={{ display: 'inline-block', background: '#2e7d32', color: 'white', padding: '14px 32px', borderRadius: '8px', textDecoration: 'none', fontWeight: '600', fontSize: '16px', transition: 'all 0.3s' }}>
+            Join Our Growing Community →
           </Link>
         </div>
       </div>
 
-      {/* Agriculture News Section */}
-      <div className="bg-gradient-to-br from-green-50 to-green-100 py-16">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="text-center mb-12">
-            <FontAwesomeIcon icon={faNewspaper} className="text-green-500 text-4xl mb-4" />
-            <h2 className="text-3xl font-bold text-green-800 mb-2">Latest Agriculture News</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Stay updated with the latest developments in Indian agriculture
-            </p>
-          </div>
+      {/* News Section */}
+      <div style={{ background: '#f9fafb', padding: '80px 20px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
+          <FontAwesomeIcon icon={faNewspaper} style={{ fontSize: '40px', color: '#2e7d32', marginBottom: '16px' }} />
+          <h2 style={{ fontSize: '36px', fontWeight: '700', marginBottom: '16px', color: '#1b5e20' }}>Latest Agriculture News</h2>
+          <p style={{ fontSize: '18px', color: '#6b7280', marginBottom: '48px' }}>
+            Stay updated with the latest developments in Indian agriculture
+          </p>
 
           {loading ? (
-            <div className="flex justify-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+              <div style={{ width: '40px', height: '40px', border: '3px solid #e5e7eb', borderTopColor: '#2e7d32', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {news.map((article, index) => (
-                <div key={index} className="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-                  <div className="h-48 overflow-hidden">
-                    <img 
-                      src={article.urlToImage || "https://via.placeholder.com/300x200?text=Agriculture+News"} 
-                      alt={article.title} 
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-green-800 mb-2 line-clamp-2">
-                      {article.title}
-                    </h3>
-                    <p className="text-gray-600 mb-4 line-clamp-3">
-                      {article.description || "Read more about this agriculture news story."}
-                    </p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-500">
-                        {new Date(article.publishedAt).toLocaleDateString()}
-                      </span>
-                      <a 
-                        href={article.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="text-green-600 hover:text-green-800 font-medium"
-                      >
-                        Read More →
-                      </a>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
+              {news.slice(0, 4).map((article, index) => (
+                <div key={index} style={{ background: 'white', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.05)', transition: 'all 0.3s' }}>
+                  <img src={article.urlToImage || "https://via.placeholder.com/300x180?text=Agriculture+News"} alt={article.title} style={{ width: '100%', height: '180px', objectFit: 'cover' }} />
+                  <div style={{ padding: '20px' }}>
+                    <h3 style={{ fontSize: '16px', fontWeight: '600', marginBottom: '8px', color: '#1f2937', lineHeight: '1.4' }}>{article.title}</h3>
+                    <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px', lineHeight: '1.5' }}>{article.description?.substring(0, 100)}...</p>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontSize: '11px', color: '#9ca3af' }}>{new Date(article.publishedAt).toLocaleDateString()}</span>
+                      <a href={article.url} target="_blank" rel="noopener noreferrer" style={{ color: '#2e7d32', fontSize: '12px', fontWeight: '500', textDecoration: 'none' }}>Read More →</a>
                     </div>
                   </div>
                 </div>
@@ -273,90 +463,126 @@ function Landing() {
       </div>
 
       {/* Footer */}
-      <footer className="w-full bg-green-800 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Logo and Description */}
-            <div className="space-y-4">
-              {/* Updated Footer Logo */}
-              <div className="flex items-center">
-                <div className="relative">
-                  <FontAwesomeIcon 
-                    icon={faLeaf} 
-                    size="lg" 
-                    className="text-green-300 mr-2" 
-                  />
-                 
-                </div>
-                <span className="text-2xl font-bold text-green-100">Krishiमित्र</span>
+      <footer style={{ background: '#1b5e20', color: 'white', padding: '60px 20px 30px' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '40px', marginBottom: '40px' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', marginBottom: '16px' }}>
+                <FontAwesomeIcon icon={faLeaf} style={{ fontSize: '24px', marginRight: '10px' }} />
+                <span style={{ fontSize: '24px', fontWeight: 'bold' }}>Krishiमित्र</span>
               </div>
-              <p className="text-green-200">
+              <p style={{ color: '#c8e6c9', lineHeight: '1.6', fontSize: '14px' }}>
                 Connecting farmers and buyers through innovative technology for a sustainable agricultural future.
               </p>
-              <div className="flex space-x-4">
-                <a href="#" className="text-green-300 hover:text-white transition-colors">
-                  <FontAwesomeIcon icon={faFacebookF} />
-                </a>
-                <a href="#" className="text-green-300 hover:text-white transition-colors">
-                  <FontAwesomeIcon icon={faTwitter} />
-                </a>
-                <a href="#" className="text-green-300 hover:text-white transition-colors">
-                  <FontAwesomeIcon icon={faInstagram} />
-                </a>
-                <a href="#" className="text-green-300 hover:text-white transition-colors">
-                  <FontAwesomeIcon icon={faLinkedinIn} />
-                </a>
+              <div style={{ display: 'flex', gap: '16px', marginTop: '20px' }}>
+                <a href="#" style={{ color: '#c8e6c9', transition: 'color 0.3s' }}><FontAwesomeIcon icon={faFacebookF} /></a>
+                <a href="#" style={{ color: '#c8e6c9', transition: 'color 0.3s' }}><FontAwesomeIcon icon={faTwitter} /></a>
+                <a href="#" style={{ color: '#c8e6c9', transition: 'color 0.3s' }}><FontAwesomeIcon icon={faInstagram} /></a>
+                <a href="#" style={{ color: '#c8e6c9', transition: 'color 0.3s' }}><FontAwesomeIcon icon={faLinkedinIn} /></a>
               </div>
             </div>
 
-            {/* Quick Links */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-green-100">Quick Links</h3>
-              <ul className="space-y-2">
-                <li><Link to="/about" className="text-green-300 hover:text-white transition-colors">About Us</Link></li>
-                <li><Link to="/marketplace" className="text-green-300 hover:text-white transition-colors">Marketplace</Link></li>
-                <li><Link to="/pricing" className="text-green-300 hover:text-white transition-colors">Pricing</Link></li>
-                <li><Link to="/blog" className="text-green-300 hover:text-white transition-colors">Blog</Link></li>
+              <h3 style={{ fontSize: '18px', marginBottom: '16px' }}>Quick Links</h3>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                <li style={{ marginBottom: '8px' }}><Link to="/about" style={{ color: '#c8e6c9', textDecoration: 'none' }}>About Us</Link></li>
+                <li style={{ marginBottom: '8px' }}><Link to="/marketplace" style={{ color: '#c8e6c9', textDecoration: 'none' }}>Marketplace</Link></li>
+                <li style={{ marginBottom: '8px' }}><Link to="/pricing" style={{ color: '#c8e6c9', textDecoration: 'none' }}>Pricing</Link></li>
+                <li style={{ marginBottom: '8px' }}><Link to="/blog" style={{ color: '#c8e6c9', textDecoration: 'none' }}>Blog</Link></li>
               </ul>
             </div>
 
-            {/* Support */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-green-100">Support</h3>
-              <ul className="space-y-2">
-                <li><Link to="/faq" className="text-green-300 hover:text-white transition-colors">FAQ</Link></li>
-                <li><Link to="/contact" className="text-green-300 hover:text-white transition-colors">Contact Us</Link></li>
-                <li><Link to="/privacy" className="text-green-300 hover:text-white transition-colors">Privacy Policy</Link></li>
-                <li><Link to="/terms" className="text-green-300 hover:text-white transition-colors">Terms of Service</Link></li>
+              <h3 style={{ fontSize: '18px', marginBottom: '16px' }}>Support</h3>
+              <ul style={{ listStyle: 'none', padding: 0 }}>
+                <li style={{ marginBottom: '8px' }}><Link to="/faq" style={{ color: '#c8e6c9', textDecoration: 'none' }}>FAQ</Link></li>
+                <li style={{ marginBottom: '8px' }}><Link to="/contact" style={{ color: '#c8e6c9', textDecoration: 'none' }}>Contact Us</Link></li>
+                <li style={{ marginBottom: '8px' }}><Link to="/privacy" style={{ color: '#c8e6c9', textDecoration: 'none' }}>Privacy Policy</Link></li>
+                <li style={{ marginBottom: '8px' }}><Link to="/terms" style={{ color: '#c8e6c9', textDecoration: 'none' }}>Terms of Service</Link></li>
               </ul>
             </div>
 
-            {/* Contact Info */}
             <div>
-              <h3 className="text-lg font-semibold mb-4 text-green-100">Contact Us</h3>
-              <address className="not-italic space-y-2 text-green-300">
-                <p className="flex items-start">
-                  <FontAwesomeIcon icon={faMapMarkerAlt} className="mt-1 mr-2" />
-                  <span>123 Farm Lane, Agricultural City, AG 12345</span>
-                </p>
-                <p className="flex items-center">
-                  <FontAwesomeIcon icon={faPhoneAlt} className="mr-2" />
-                  <a href="tel:+11234567890">+1 (123) 456-7890</a>
-                </p>
-                <p className="flex items-center">
-                  <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
-                  <a href="mailto:info@cropboom.com">info@krishimitr.com</a>
-                </p>
+              <h3 style={{ fontSize: '18px', marginBottom: '16px' }}>Contact Us</h3>
+              <address style={{ fontStyle: 'normal', color: '#c8e6c9', fontSize: '14px', lineHeight: '1.8' }}>
+                <p><FontAwesomeIcon icon={faMapMarkerAlt} style={{ marginRight: '8px' }} /> 123 Farm Lane, Agricultural City, AG 12345</p>
+                <p><FontAwesomeIcon icon={faPhoneAlt} style={{ marginRight: '8px' }} /> +1 (123) 456-7890</p>
+                <p><FontAwesomeIcon icon={faEnvelope} style={{ marginRight: '8px' }} /> info@krishimitr.com</p>
               </address>
             </div>
           </div>
 
-          {/* Copyright */}
-          <div className="border-t border-green-700 mt-8 pt-8 text-center text-green-300">
+          <div style={{ borderTop: '1px solid #388e3c', paddingTop: '24px', textAlign: 'center', color: '#c8e6c9', fontSize: '14px' }}>
             <p>&copy; {new Date().getFullYear()} Krishiमित्र. All rights reserved.</p>
           </div>
         </div>
       </footer>
+
+      {/* Add CSS Animations */}
+      <style>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px);
+          }
+          50% {
+            transform: translateY(-10px);
+          }
+        }
+        
+        @keyframes scroll {
+          0% {
+            transform: translateX(0);
+          }
+          100% {
+            transform: translateX(-50%);
+          }
+        }
+        
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        
+        .reveal-left, .reveal-right, .reveal-up {
+          opacity: 0;
+          transition: all 0.6s ease-out;
+        }
+        
+        .reveal-left.visible {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        
+        .reveal-left {
+          transform: translateX(-30px);
+        }
+        
+        .reveal-right {
+          transform: translateX(30px);
+        }
+        
+        .reveal-right.visible {
+          opacity: 1;
+          transform: translateX(0);
+        }
+        
+        .reveal-up {
+          transform: translateY(30px);
+        }
+        
+        .reveal-up.visible {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+          .grid-cols-2 {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      `}</style>
     </div>
   );
 }
